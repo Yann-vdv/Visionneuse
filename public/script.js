@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     images.forEach(image => {
         image.addEventListener('click', () => {
+            // Récupérer la position et les dimensions de l'image d'origine
+            const rect = image.getBoundingClientRect();
+            const width = rect.width;  // Largeur de l'image d'origine
+            const height = rect.height; // Hauteur de l'image d'origine
+
             // Créez une copie agrandie de l'image au clic
             const zoomedImg = new Image();
             zoomedImg.src = image.src;
@@ -21,13 +26,29 @@ document.addEventListener('DOMContentLoaded', () => {
             // Ajoutez la version agrandie à la page
             document.body.appendChild(zoomedImgContainer);
 
+            // Positionner l'image agrandie à la même position que l'image d'origine
+            zoomedImg.style.position = 'absolute'; // Position absolue pour la mettre où on veut
+            const zoomedImgTop = rect.top + window.scrollY; // Calcul de la position verticale
+            const zoomedImgLeft = rect.left + window.scrollX; // Calcul de la position horizontale
+            zoomedImg.style.top = `${zoomedImgTop}px`;
+            zoomedImg.style.left = `${zoomedImgLeft}px`;
+            zoomedImg.style.width = `${width}px`; // Largeur de l'image d'origine
+            zoomedImg.style.height = `${height}px`; // Hauteur de l'image d'origine
+
             setTimeout(() => {
-                zoomedImg.style.transform = 'translate(-50%, -50%) scale(1.3)'; // Zoom à 150%
+
+                const translateX = (window.innerWidth - width)/2 - zoomedImgLeft;
+                const translateY = (window.innerHeight - height)/2 - zoomedImgTop;
+
+                zoomedImg.style.transition = 'transform 0.3s ease-in-out'; // Transition d'agrandissement
+                zoomedImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(1.8)`; // Zoom à 150%
+    
             }, 10);
             
             // Supprimez l'image agrandie lorsqu'elle est cliquée
             zoomedImgContainer.addEventListener('click', () => {
-                zoomedImg.style.transform = 'translate(-50%, -50%) scale(0.8)'; // Retour au zoom initial
+                zoomedImg.style.transition = 'transform 0.3s ease-in-out'; // Transition de réduction
+                zoomedImg.style.transform = 'scale(1)'; // Retour au zoom initial
                 setTimeout(() => {
                     document.body.removeChild(zoomedImgContainer);
                 }, 300)
