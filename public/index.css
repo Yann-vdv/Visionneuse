@@ -44,7 +44,6 @@
     max-width: 45vw;
     max-height: 40vh;
     cursor: pointer;
-    transition: transform 0.3s ease-in-out;
     border-radius: 5px;
 }
 
