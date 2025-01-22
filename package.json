@@ -1,0 +1,25 @@
+{
+  "name": "visionneuse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./index.js",
+  "bin": "./index.js",
+  "pkg": {
+    "targets": [
+      "node16-win-x64"
+    ],
+    "icon": "public/camera.ico"
+  },
+  "scripts": {
+    "start": "node .",
+    "build": "pkg . --output Visionneuse.exe"
+  },
+  "keywords": [],
+  "author": "Yann Van De Veire",
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  }
+}
