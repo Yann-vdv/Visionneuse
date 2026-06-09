@@ -33,6 +33,9 @@ const getConfig = () => {
       }
     
       try {
+        // Fix possible "\"
+        data = data.replace(/\\/g, '/');
+        
         // Analyser le contenu JSON du fichier de configuration
         const config = JSON.parse(data);
     
