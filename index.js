@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
+const { logError } = require('./logger');
 
 const app = express();
 const port = 3000;
@@ -35,7 +36,7 @@ const getConfig = () => {
       try {
         // Fix possible "\"
         data = data.replace(/\\/g, '/');
-        
+
         // Analyser le contenu JSON du fichier de configuration
         const config = JSON.parse(data);
     
@@ -61,8 +62,10 @@ const getConfig = () => {
         resolve({directoryToWatch:directoryToWatch,siteTitle:siteTitle});
     
       } catch (parseErr) {
+        logError('parseErr', parseErr.message);
         reject(parseErr);
         console.error('Erreur lors de l\'analyse du fichier de configuration JSON :', parseErr);
+        return;
       }
     });
   });
@@ -77,23 +80,30 @@ const getRecentImages = () => {
         return;
       }
 
-      // Filtrer les fichiers pour ne prendre que les images (par extension)
-      const imageFiles = files.filter(file => {
-        const extension = path.extname(file).toLowerCase();
-        return extension === '.jpg' || extension === '.jpeg' || extension === '.png' || extension === '.gif';
-      });
+      try {
+        // Filtrer les fichiers pour ne prendre que les images (par extension)
+        const imageFiles = files.filter(file => {
+          const extension = path.extname(file).toLowerCase();
+          return extension === '.jpg' || extension === '.jpeg' || extension === '.png' || extension === '.gif';
+        });
 
-      // Trier les fichiers par date de modification
-      imageFiles.sort((a, b) => {
-        const statA = fs.statSync(path.join(directoryToWatch, a));
-        const statB = fs.statSync(path.join(directoryToWatch, b));
-        return statB.mtime.getTime() - statA.mtime.getTime();
-      });
+        // Trier les fichiers par date de modification
+        imageFiles.sort((a, b) => {
+          const statA = fs.statSync(path.join(directoryToWatch, a));
+          const statB = fs.statSync(path.join(directoryToWatch, b));
+          return statB.mtime.getTime() - statA.mtime.getTime();
+        });
 
-      // Récupérer les 4 fichiers les plus récents
-      const recentImages = imageFiles.slice(0, 4);
+        // Récupérer les 4 fichiers les plus récents
+        const recentImages = imageFiles.slice(0, 4);
 
-      resolve(recentImages);
+        resolve(recentImages);
+      } catch (recentImagesErr) {
+        logError('recentImagesErr', recentImagesErr.message);
+        reject(recentImagesErr);
+        console.error('Erreur lors de l\'analyse du fichier de configuration JSON :', recentImagesErr);
+        return;
+      }
     });
   });
 };
@@ -119,8 +129,8 @@ app.get('/', async (req, res) => {
         </head>
         <body class="bodyStyle">
           <div class="container" style="margin-top:20px">
-            <div class="imgContainer">${imageElements[0]}</div>
-            <div class="imgContainer">${imageElements[1]}</div>
+            <div class="imgContainer">${imageElements[0] ? imageElements[0] : ''}</div>
+            <div class="imgContainer">${imageElements[1] ? imageElements[1] : ''}</div>
           </div>
           ${supText ? `
             <h1 class="animated-text" data-texts='["${siteTitle}", "${supText}"]'>${siteTitle}</h1>
@@ -128,17 +138,33 @@ app.get('/', async (req, res) => {
             <h1 class="title">${siteTitle}</h1>
           `}
           <div class="container" style="margin-bottom:20px">
-            <div class="imgContainer">${imageElements[2]}</div>
-            <div class="imgContainer">${imageElements[3]}</div>
+            <div class="imgContainer">${imageElements[2] ? imageElements[2] : ''}</div>
+            <div class="imgContainer">${imageElements[3] ? imageElements[3] : ''}</div>
           </div>
           <script src="./script.js"></script>
         </body>
       </html>
     `;
     res.send(html);
-  } catch (err) {
-    console.error('Erreur lors de la récupération des images :', err);
-    res.status(500).send('Une erreur est survenue');
+  } catch (HtmlErr) {
+    logError('HtmlErr', HtmlErr.message);
+    console.error('Erreur lors de la construction de la page HTML :', HtmlErr);
+    const htmlError = `
+      <html>
+        <head>
+          <title>STUDIO PHOTO MUSICOGRAPH</title>
+          <link rel="stylesheet" href="./index.css">
+        </head>
+        <body class="bodyStyle errBodyStyle">
+          <div>
+            <h1 class="title">STUDIO PHOTO MUSICOGRAPH</h1>
+            <p>Une erreur est survenue lors de la construction de la page HTML.</p>
+          </div>
+          <p style="margin-top: 60px;">${HtmlErr?.message || 'Erreur inconnue'}</p>
+        </body>
+      </html>
+    `;
+    res.status(500).send(htmlError);
   }
 });
 

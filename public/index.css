@@ -1,13 +1,10 @@
-.title {
+html, body {
     color: white;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
 }
 
 .animated-text {
-    color: white;
-    text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
     opacity: 1;
     transition: opacity 1s ease-in-out;
 }
@@ -66,4 +63,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.errBodyStyle {
+    color: red;
+    justify-content: center;
 }
