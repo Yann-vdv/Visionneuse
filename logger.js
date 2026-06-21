@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
+const { app } = require('electron');
 
-const LOGS_DIR = 'logs';
+const LOGS_DIR = path.join(app.getPath('userData'), 'logs');
 
 // Créer le dossier logs s'il n'existe pas
 if (!fs.existsSync(LOGS_DIR)) {
@@ -42,4 +43,9 @@ const logError = (source, errorMessage) => {
   }
 };
 
-module.exports = { logError };
+// Fonction pour obtenir le chemin du dossier logs
+const getLogsDir = () => {
+  return LOGS_DIR;
+};
+
+module.exports = { logError, getLogsDir };

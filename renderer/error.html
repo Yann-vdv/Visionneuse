@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Visionneuse</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body class="errBodyStyle">
+    <div>
+        <h1 class="title">Visionneuse</h1>
+        <p>Une erreur est survenue lors de la construction de l'application.</p>
+    </div>
+    <p id="errorMessage" style="margin-top: 60px;"></p>
+
+    <script>
+        const params = new URLSearchParams(location.search);
+        document.getElementById('errorMessage').textContent = params.get('message') || 'Erreur inconnue';
+    </script>
+</body>
+
+</html>

@@ -1,5 +1,0 @@
-{
-    "titre":"STUDIO PHOTO MUSICOGRAPH",
-    "titre2":"",
-    "chemin":"D:/Documents/Projets/Perso/Visionneuse/images"
-}

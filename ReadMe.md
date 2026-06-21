@@ -11,18 +11,22 @@
 git clone https://github.com/Yann-vdv/Visionneuse
 ```
 2. **Configuration :**
-
-    Utilisez le fichier config.txt et rentrer les valeurs désirées
-- attention à bien garder les accolades et guillemets
-- utiliser titre2 pour des textes alternatifs
+```bash
+Ctrl Shift C
+```
 3. **Installer les dépendances :**
 ```bash
-pnpm install
+npm install
 ```
 4. **Lancer l'application :**
 ```bash
-pnpm start
+npm start
 ```
+5. **Fermer l'application :**
 ```bash
-Visionneuse.exe
+Alt F4
+```
+6. **Ouvrir les logs :**
+```bash
+Ctrl Shift l
 ```

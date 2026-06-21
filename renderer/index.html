@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Visionneuse</title>
+
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+  <div id="topRow" class="row" style="margin-top:20px"></div>
+
+  <h1 id="title"></h1>
+
+  <div id="bottomRow" class="row" style="margin-bottom:20px"></div>
+
+  <div id="configModal" class="modal hidden">
+    <div class="modal-content">
+      <button id="closeConfig" class="modal-close" aria-label="Fermer">×</button>
+      <h2>Configuration</h2>
+      <div class="config-field">
+        <label for="configTitle">Titre</label>
+        <input id="configTitle" class="config-input" type="text" />
+      </div>
+      <div class="config-field">
+        <label for="configSubtitle">Sous-titre</label>
+        <input id="configSubtitle" class="config-input" type="text" />
+      </div>
+      <div class="config-field">
+        <label for="configPath">Dossier d'images</label>
+        <div class="config-folder-row">
+          <input id="configPath" class="config-input" type="text" readonly />
+          <button id="selectFolder">Sélectionner</button>
+        </div>
+      </div>
+      <div class="config-actions">
+        <button id="saveConfig">Enregistrer</button>
+        <button id="cancelConfig" class="secondary">Annuler</button>
+      </div>
+      <p class="config-tip">Raccourci : Ctrl+Shift+C</p>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+
+</body>
+
+</html>
