@@ -2,17 +2,11 @@
   "name": "visionneuse",
   "version": "1.0.0",
   "description": "",
-  "main": "./index.js",
-  "bin": "./index.js",
-  "pkg": {
-    "targets": [
-      "node16-win-x64"
-    ],
-    "icon": "public/camera.ico"
-  },
+  "main": "./main.js",
+  "bin": "./main.js",
   "scripts": {
     "start": "node .",
-    "build": "pkg . --output Visionneuse.exe"
+    "electronStart": "electron ."
   },
   "keywords": [],
   "author": "Yann Van De Veire",
@@ -21,5 +15,8 @@
     "chokidar": "^3.5.3",
     "express": "^4.18.2",
     "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "electron": "^42.4.1"
   }
 }
