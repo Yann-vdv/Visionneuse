@@ -4,13 +4,16 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: './public/camera.ico',
+    icon: './public/camera.ico'
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        iconUrl: 'https://raw.githubusercontent.com/Yann-vdv/Visionneuse/refs/heads/master/public/camera.ico',
+        setupIcon: './public/camera.ico',
+      },
     },
     {
       name: '@electron-forge/maker-zip',
@@ -18,11 +21,19 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        options: {
+          icon: './public/camera.png',
+        },
+      },
     },
     {
       name: '@electron-forge/maker-rpm',
-      config: {},
+      config: {
+        options: {
+          icon: './public/camera.png',
+        },
+      },
     },
   ],
   plugins: [
