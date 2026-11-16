@@ -8,7 +8,8 @@ const CONFIG_FILE = path.join(app.getPath('userData'), 'config.json');
 const DEFAULT_CONFIG = {
     chemin: '',
     titre: 'Visionneuse',
-    titre2: ''
+    titre2: '',
+    delay: 3
 };
 
 let mainWindow;
@@ -16,7 +17,7 @@ let watcher;
 let directoryToWatch = '';
 let siteTitle = '';
 let supText = '';
-
+let delay = 3;
 function loadConfig() {
     try {
         let config;
@@ -31,6 +32,7 @@ function loadConfig() {
         directoryToWatch = config.chemin || '';
         siteTitle = config.titre || DEFAULT_CONFIG.titre;
         supText = config.titre2 || '';
+        delay = config.delay || DEFAULT_CONFIG.delay;
 
         return config;
     } catch (err) {
@@ -60,6 +62,7 @@ function saveConfig(config) {
         directoryToWatch = normalizedConfig.chemin;
         siteTitle = normalizedConfig.titre;
         supText = normalizedConfig.titre2 || '';
+        delay = normalizedConfig.delay || DEFAULT_CONFIG.delay;
 
         if (watcher) {
             watcher.close();
@@ -271,6 +274,7 @@ app.whenReady().then(() => {
 ipcMain.handle('get-config', () => ({
     title: siteTitle,
     subtitle: supText,
+    delay: delay,
     chemin: directoryToWatch
 }));
 

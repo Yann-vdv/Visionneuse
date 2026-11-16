@@ -7,16 +7,22 @@ let currentConfig = {
 const modal = document.getElementById('configModal');
 const configTitleInput = document.getElementById('configTitle');
 const configSubtitleInput = document.getElementById('configSubtitle');
+const configTitlesDelayInput = document.getElementById('configTitlesDelay');
+const configTitlesDelay = document.getElementById('configTitlesDelay');
 const configPathInput = document.getElementById('configPath');
 const selectFolderButton = document.getElementById('selectFolder');
 const saveConfigButton = document.getElementById('saveConfig');
 const cancelConfigButton = document.getElementById('cancelConfig');
 const closeConfigButton = document.getElementById('closeConfig');
 
+let titleTimeout;
+let fadeTimeout;
+
 function openConfigModal() {
     modal.classList.remove('hidden');
     configTitleInput.value = currentConfig.title || '';
     configSubtitleInput.value = currentConfig.subtitle || '';
+    configTitlesDelayInput.value = currentConfig.delay || 3;
     configPathInput.value = currentConfig.chemin || '';
     configTitleInput.focus();
 }
@@ -30,7 +36,8 @@ async function loadConfig() {
     currentConfig = {
         title: config.title || 'Visionneuse',
         subtitle: config.subtitle || '',
-        chemin: config.chemin || ''
+        chemin: config.chemin || '',
+        delay: config.delay || 3
     };
 
     const title = document.getElementById('title');
@@ -39,16 +46,19 @@ async function loadConfig() {
         title.textContent = currentConfig.title;
 
         function changeTitle() {
+            clearTimeout(titleTimeout);
+            clearTimeout(fadeTimeout);
+
             title.classList.add('fade-out');
-            setTimeout(() => {
+            fadeTimeout = setTimeout(() => {
                 title.textContent =
                     title.textContent === currentConfig.title
                         ? currentConfig.subtitle
                         : currentConfig.title;
                 title.classList.remove('fade-out');
             }, 1000);
-
-            setTimeout(changeTitle, 3000);
+            console.log('currentConfig.delay', currentConfig.delay);
+            titleTimeout = setTimeout(changeTitle, currentConfig.delay*1000 || 3000);
         }
 
         changeTitle();
@@ -66,17 +76,18 @@ async function refreshImages() {
     top.innerHTML = '';
     bottom.innerHTML = '';
 
-    if (images.length === 0) {
+    const existingEmpty = document.getElementById('emptyMessage');
+    if (images.length === 0 && !existingEmpty) {
         const empty = document.createElement('p');
         empty.textContent = 'Aucune image trouvée. Ouvrez la configuration avec Ctrl+Shift+C.';
         empty.style.opacity = '0.7';
         empty.style.margin = '0 auto';
         empty.style.fontSize = '1.1rem';
+        empty.id = 'emptyMessage';
         document.body.appendChild(empty);
         return;
     }
 
-    const existingEmpty = document.querySelector('body > p');
     if (existingEmpty) {
         existingEmpty.remove();
     }
@@ -121,6 +132,13 @@ async function refreshImages() {
     }
 
     images.forEach((image, index) => {
+        const container = document.createElement('div');
+
+        const name = document.createElement('h4');
+        name.textContent = image.name.match(/\d+/)?.[0] || image.name;
+        name.style.marginBlockEnd = '0';
+        name.style.marginBlockStart = '2px';
+
         const img = document.createElement('img');
         img.className = 'photo';
         img.src = 'file:///' + image.path.replace(/\\/g, '/');
@@ -129,10 +147,13 @@ async function refreshImages() {
             zoomImage(img);
         });
 
+        container.appendChild(img);
+        container.appendChild(name);
+
         if (index < 2) {
-            top.appendChild(img);
+            top.appendChild(container);
         } else {
-            bottom.appendChild(img);
+            bottom.appendChild(container);
         }
     });
 }
@@ -141,6 +162,7 @@ async function saveConfig() {
     const config = {
         titre: configTitleInput.value.trim() || 'Visionneuse',
         titre2: configSubtitleInput.value.trim(),
+        delay: parseInt(configTitlesDelayInput.value.trim()) || 3,
         chemin: configPathInput.value.trim()
     };
 
@@ -161,9 +183,16 @@ selectFolderButton.addEventListener('click', chooseFolder);
 saveConfigButton.addEventListener('click', saveConfig);
 cancelConfigButton.addEventListener('click', closeConfigModal);
 closeConfigButton.addEventListener('click', closeConfigModal);
+
 modal.addEventListener('click', event => {
     if (event.target === modal) {
         closeConfigModal();
+    }
+});
+
+configTitlesDelay.addEventListener('change', () => {
+    if (configTitlesDelay.value < 2) {
+        configTitlesDelay.value = 2;
     }
 });
 
